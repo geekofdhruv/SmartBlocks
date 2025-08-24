@@ -14,12 +14,9 @@ contract LogicContract is IERC721Receiver, Ownable {
     event LogicExecuted(address indexed triggerWallet, string action);
 
     // The 'initialOwner' will be the user who deploys this contract
-    constructor(
-        address initialOwner,
-        address _nftAddress,
-        address _tokenAddress,
-        uint256 _amount
-    ) Ownable(initialOwner) {
+    constructor(address initialOwner, address _nftAddress, address _tokenAddress, uint256 _amount)
+        Ownable(initialOwner)
+    {
         nftCollectionAddress = _nftAddress;
         rewardTokenAddress = _tokenAddress;
         rewardAmount = _amount; // We'll handle decimals on the deployment script
@@ -28,12 +25,12 @@ contract LogicContract is IERC721Receiver, Ownable {
     /**
      * @notice This is the TRIGGER function, called when an ERC721 is received.
      */
-    function onERC721Received(
-        address, /* operator */
-        address from,
-        uint256, /* tokenId */
-        bytes memory /* data */
-    ) public virtual override returns (bytes4) {
+    function onERC721Received(address, /* operator */ address from, uint256, /* tokenId */ bytes memory /* data */ )
+        public
+        virtual
+        override
+        returns (bytes4)
+    {
         // Security Check: Only trigger if the NFT is from the correct collection
         require(msg.sender == nftCollectionAddress, "Invalid NFT Collection");
 
