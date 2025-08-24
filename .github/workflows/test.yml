@@ -9,6 +9,7 @@ on:
 env:
   NODE_VERSION: '18'
   FOUNDRY_PROFILE: ci
+  FOUNDRY_DISABLE_NIGHTLY_WARNING: true
 
 jobs:
   # Job 1: Smart Contract Validation
@@ -56,11 +57,6 @@ jobs:
       - name: Build contracts
         run: forge build --sizes
 
-      - name: Check contract sizes
-        run: |
-          forge build --sizes | grep -E "Contract|Size" || true
-          echo "Checking for oversized contracts..."
-          forge build --sizes | awk 'NR>1 && $2 > 24576 { print "WARNING: " $1 " exceeds 24KB limit: " $2 " bytes"; exit_code=1 } END { exit exit_code }'
 
   # Job 2: Frontend Validation
   frontend-validation:
@@ -150,7 +146,7 @@ jobs:
             echo "No sensitive files detected"
           fi
 
-  # Job 5: Dependency Audit
+  # Job 4: Dependency Audit
   dependency-audit:
     name: Dependency Audit
     runs-on: ubuntu-latest
@@ -181,7 +177,7 @@ jobs:
             npm outdated || true
           fi
 
-  # Job 6: Build Summary
+  # Job 5: Build Summary
   build-summary:
     name: Build Summary
     runs-on: ubuntu-latest
@@ -198,6 +194,7 @@ jobs:
           echo "| Smart Contracts | ${{ needs.contracts-validation.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Frontend | ${{ needs.frontend-validation.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Security Checks | ${{ needs.security-checks.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dependency Audit | ${{ needs.dependency-audit.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY

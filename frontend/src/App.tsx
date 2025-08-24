@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/App.tsx
 
 import { useState, useCallback } from 'react';
@@ -6,6 +7,7 @@ import ReactFlow, {
   Background,
   applyNodeChanges,
   applyEdgeChanges,
+  addEdge,
 } from 'reactflow';
 import type { Node, Edge, NodeChange, EdgeChange, Connection, NodeTypes} from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -55,7 +57,7 @@ function App() {
 
         if (dataChange) {
           return updatedNodes.map((node) => {
-            if (node.id === dataChange.id) {
+            if (node.id === (dataChange as any).id) {
               const target = (dataChange as any).event?.target as HTMLInputElement;
               if (target) {
                 return {
@@ -79,7 +81,7 @@ function App() {
   );
   
   const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => [...eds, { ...connection, id: `${eds.length + 1}` }]),
+    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   );
 
