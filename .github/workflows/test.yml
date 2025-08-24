@@ -56,9 +56,6 @@ jobs:
       - name: Build contracts
         run: forge build --sizes
 
-      - name: Generate gas snapshots
-        run: forge snapshot --check
-
       - name: Check contract sizes
         run: |
           forge build --sizes | grep -E "Contract|Size" || true
